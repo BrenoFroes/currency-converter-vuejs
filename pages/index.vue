@@ -48,17 +48,17 @@ export default {
   methods: {
     loadListCripts() {
       this.$axios
-        .$get('https://rest.coinapi.io/v1/exchanges', {
+        .$get("https://rest.coinapi.io/v1/assets?filter_asset_id=BTC,ETH,USDT,BNB,USD,XRP,LUNA,ADA,SOL,BUSD", {
           headers: {
             'X-CoinAPI-Key': 'C0012C6B-347D-4FE3-9F48-11A3E53FEDAE'
           }
         })
-        .then(function (response) {
-          console.log(response.data);
-          return response;
+        .then((response) => {
+          console.log(response);
+          this.criptoList = response;
         })
         .catch(function (error) {
-          return error;
+          console.log(error);
         });
     },
   },
