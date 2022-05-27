@@ -1,18 +1,19 @@
 <template>
-  <div class="w-4/5 lg:w-1/2 mx-auto my-20">
-    <h1 class="text-3xl font-semibold text-blue-300 text-center">Criptocurrency Quote</h1>
-    <div class="flex items-center justify-start mt-20 mb-5">
-      <form id="usd-value">
+  <div class="w-full md:w-3/4 mx-5 md:mx-auto my-20">
+    <CustomHeader></CustomHeader>
+    <div class="flex items-center justify-start items-start flex-col sm:flex-row mt-10 mb-5">
+      <form id="usd-value" class="w-auto mt-5 sm:mt-0 flex flex-col sm:flex-row mr-auto sm:items-center">
         <label class="mr-5" for="cripto-name">USD value:</label>
-        <input type="text" class="border-solid border-2 border-sky-500 hover:border-double mr-5" placeholder="ex: 20.00"
-          id="cripto-name" v-model="usdValue" @keyup.prevent="convertValues()">
+        <input type="text" class="border-solid border-2 mr-5" placeholder="ex: 20.00" id="cripto-name"
+          v-model="usdValue" @keyup.prevent="convertValues()">
       </form>
-      <form id="add-cripto" @submit.prevent="addCripto()">
-        <label class="mr-5" for="cripto-name">Cripto name:</label>
-        <input type="text" class="border-solid border-2 border-sky-500 hover:border-double mr-5"
-          placeholder="ex: Bitcoin" id="cripto-name" v-model="newCripto">
+      <form id="add-cripto" @submit.prevent="addCripto()"
+        class="w-auto mt-5 sm:mt-0 flex flex-col sm:flex-row mr-auto sm:items-center">
+        <label class="sm:mr-5 mr-1" for="cripto-name">Cripto name:</label>
+        <input type="text" class="border-solid border-2 sm:mr-5 mr-1" placeholder="ex: Bitcoin" id="cripto-name"
+          v-model="newCripto">
         <button type="submit"
-          class="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded mr-5">Add</button>
+          class="bg-blue-500 hover:bg-blue-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Add</button>
       </form>
     </div>
     <hr>
@@ -22,7 +23,7 @@
     </div>
     <img v-if="loading" class="mx-auto mt-10" :src="svgLoading">
     <table v-if="!erro && !loading"
-      class="w-full text-left border-solid border-2 border-sky-500 rounded mt-5 table-auto max-w-full">
+      class="w-auto sm:w-full text-left border-solid border-2 border-sky-500 rounded mt-5 table-fixed max-w-full">
       <thead>
         <tr>
           <th>Name</th>
@@ -46,14 +47,16 @@
 </template>
 
 <script>
+import CustomHeader from '../components/base/custom-header.vue'
 export default {
-  name: 'IndexPage',
+  name: "IndexPage",
+  components: { CustomHeader },
   data() {
     return {
-      svgLoading: require('../assets/svg/bars.svg'),
-      svgError: require('../assets/svg/error.svg'),
+      svgLoading: require("../assets/svg/bars.svg"),
+      svgError: require("../assets/svg/error.svg"),
+      coinKey: "DF0FBFA7-62B3-48EE-AC9E-E9AEDDF7592F",
       namesList: ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "LUNA", "ADA", "SOL", "BUSD"],
-      transformList: "",
       newCripto: "",
       newQuoteList: [],
       criptoList: [],
@@ -61,42 +64,44 @@ export default {
       usdValue: null,
       erro: false,
       loading: false
-    }
+    };
   },
-  comuputed: {
-  },
+  comuputed: {},
   methods: {
     async loadListCripts() {
       this.loading = true;
       let vm = this;
+      let transformList = "";
+
       // Convert list to string
-      this.transformList = this.namesList.toString();
-      this.transformList = this.transformList.replace('"', '');
-      this.transformList = this.transformList.replace('[', '');
-      this.transformList = this.transformList.replace(']', '');
+      transformList = this.namesList.toString();
+      transformList = transformList.replace("\"", "");
+      transformList = transformList.replace("[", "");
+      transformList = transformList.replace("]", "");
 
       // Call axios get assets
       await this.$axios
-        .$get(`https://rest.coinapi.io/v1/assets?filter_asset_id=${this.transformList}`, {
+        .$get(`https://rest.coinapi.io/v1/assets?filter_asset_id=${transformList}`, {
           headers: {
-            'X-CoinAPI-Key': '8AD4B576-5692-4472-BC41-4D2A9CD09FE9'
+            "X-CoinAPI-Key": `${this.coinKey}`
           }
         })
         .then((response) => {
           if (response[0]) {
             this.erro = false;
             this.criptoList = response;
-            console.log(response);
             for (let i = 0;i < this.criptoList.length;i++) {
+              // Set calculated value in 1$ and push to array
               let resultOne = 1 / this.criptoList[i].price_usd;
               this.quoteList.push(resultOne);
             }
-          } else {
+          }
+          else {
             this.erro = true;
           }
           this.loading = false;
         })
-        .catch(function (error) {
+        .catch(() => {
           vm.erro = true;
           vm.loading = false;
         });
@@ -104,29 +109,39 @@ export default {
     async addCripto() {
       this.loading = true;
       let vm = this;
+
       // Call axios get assets
       await this.$axios
         .$get(`https://rest.coinapi.io/v1/assets/${this.newCripto}`, {
           headers: {
-            'X-CoinAPI-Key': '8AD4B576-5692-4472-BC41-4D2A9CD09FE9'
+            "X-CoinAPI-Key": `${this.coinKey}`
           }
         })
         .then((response) => {
           if (response && response[0].asset_id != "USD") {
             this.erro = false;
             this.criptoList.push(response[0]);
+
+            // Get last position array
             let sizeArray = this.criptoList.length - 1;
             this.namesList.push(this.criptoList[sizeArray].asset_id);
+
+            // Set calculated value in 1$
             let resultNew = 1 / this.criptoList[sizeArray].price_usd;
+
+            // Set calculated value in infomated USD
             let resultNewUSD = this.usdValue / this.criptoList[sizeArray].price_usd;
+
+            // Push values in arrays
             this.newQuoteList.push(resultNewUSD);
             this.quoteList.push(resultNew);
-          } else {
+          }
+          else {
             this.erro = true;
           }
           this.loading = false;
         })
-        .catch(function (error) {
+        .catch(() => {
           vm.erro = true;
           vm.loading = false;
         });
@@ -139,11 +154,11 @@ export default {
       this.loadListCripts();
     }
   },
-  computed: {
-  },
   mounted: function () {
-    var x = this.loadListCripts();
-    // setInterval(x, 3000);
+    this.loadListCripts();
+    window.setInterval(() => {
+      this.loadListCripts();
+    }, 30000)
   }
 }
 </script>
