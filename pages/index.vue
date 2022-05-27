@@ -2,26 +2,33 @@
   <div class="w-full md:w-3/4 mx-5 md:mx-auto my-20">
     <CustomHeader></CustomHeader>
     <div class="flex items-center justify-start items-start flex-col lg:flex-row mt-10 mb-5">
-      <form id="api-key" class="w-auto mt-5 sm:mt-0 flex flex-col sm:flex-row mr-auto sm:items-center"
-        @submit.prevent="passKey()">
+      <form id="api-key" class="w-auto mt-5 sm:mt-0 flex flex-col mr-auto items-start" @submit.prevent="passKey()">
         <label class="mr-5" for="cripto-name">API key:</label>
-        <input type="text" class="border-solid border-2 mr-5" placeholder="ex: C826E5FE-B498-4874-83AB-D89B63B1D71F"
-          id="cripto-name" v-model="apiKey">
-        <button type="submit"
-          class="bg-green-500 hover:bg-green-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Validate</button>
+        <div>
+          <input type="text" class="border-solid border-2 mr-5" placeholder="ex: C826E5FE-B498-4874-83AB-D89B63B1D71F"
+            id="cripto-name" v-model="apiKey">
+          <button type="submit"
+            class="bg-green-500 hover:bg-green-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Validate</button>
+        </div>
       </form>
-      <form id="usd-value" class="w-auto mt-5 sm:mt-0 flex flex-col sm:flex-row mr-auto sm:items-center">
+      <form id="usd-value" class="w-auto mt-5 sm:mt-0 flex flex-col mr-auto items-start"
+        @submit.prevent="convertValues()">
         <label class="mr-5" for="cripto-name">USD value:</label>
-        <input type="text" class="border-solid border-2 mr-5" placeholder="ex: 20.00" id="cripto-name"
-          v-model="usdValue" @keyup.prevent="convertValues()">
+        <div>
+          <input type="text" class="border-solid border-2 mr-5" placeholder="ex: 20.00" id="cripto-name"
+            v-model="usdValue">
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Convert</button>
+        </div>
       </form>
-      <form id="add-cripto" @submit.prevent="addCripto()"
-        class="w-auto mt-5 sm:mt-0 flex flex-col sm:flex-row mr-auto sm:items-center">
+      <form id="add-cripto" @submit.prevent="addCripto()" class="w-auto mt-5 sm:mt-0 flex flex-col mr-auto items-start">
         <label class="sm:mr-5 mr-1" for="cripto-name">Cripto name:</label>
-        <input type="text" class="border-solid border-2 sm:mr-5 mr-1" placeholder="ex: Bitcoin" id="cripto-name"
-          v-model="newCripto">
-        <button type="submit"
-          class="bg-blue-500 hover:bg-blue-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Add</button>
+        <div>
+          <input type="text" class="border-solid border-2 sm:mr-5 mr-1" placeholder="ex: Bitcoin" id="cripto-name"
+            v-model="newCripto">
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-300 text-white font-bold sm:py-2 sm:px-4 py-1 px-2 rounded mt-5 sm:mt-2 justify-start mr-0 sm:mr-5">Add</button>
+        </div>
       </form>
     </div>
     <hr>
@@ -174,8 +181,8 @@ export default {
       }
       this.loadListCripts();
     },
-    passKey(){
-      if(this.apiKey){
+    passKey() {
+      if (this.apiKey) {
         this.coinKey = this.apiKey;
       }
       this.loadListCripts();
