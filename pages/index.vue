@@ -72,7 +72,7 @@ export default {
       svgError: require("../assets/svg/error.svg"),
       coinKey: "C826E5FE-B498-4874-83AB-D89B63B1D71F",
       apiKey: "",
-      namesList: ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "LUNA", "ADA", "SOL", "BUSD"],
+      namesList: ["BTC"],
       newCripto: "",
       newQuoteList: [],
       criptoList: [],
